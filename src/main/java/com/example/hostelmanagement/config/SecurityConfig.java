@@ -1,14 +1,15 @@
 package com.example.hostelmanagement.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.*;
 
 import java.util.Arrays;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class SecurityConfig {
@@ -16,27 +17,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .cors() // 👈 Enable CORS
-                .and()
-                .authorizeHttpRequests()
-                .anyRequest().permitAll();
+            .csrf(csrf -> csrf.disable())
+            .cors(withDefaults())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/admins/login", "/admins/logout").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
+            .logout(logout -> logout
+                .logoutUrl("/admins/logout") 
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+            );
 
         return http.build();
     }
 
-    // 👇 Define the CORS configuration here
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // React app URL
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowCredentials(true); // Optional, if you need cookies/auth headers
+        config.setAllowCredentials(true); // ✅ Important for session cookies
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
