@@ -41,4 +41,9 @@ public class PrincipalService {
     public void deletePrincipal(Long id) {
         principalRepository.deleteById(id);
     }
+
+    // ✅ ADD THIS METHOD for login
+    public Principal getByEmail(String email) {
+        return principalRepository.findByEmail(email);
+    }
 }

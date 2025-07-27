@@ -1,9 +1,12 @@
 package com.example.hostelmanagement.controller;
+import com.example.hostelmanagement.entity.Principal;
 
 import com.example.hostelmanagement.entity.Admin;
 import com.example.hostelmanagement.service.AdminService;
+import com.example.hostelmanagement.service.PrincipalService;
+
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -23,27 +26,47 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+
+    @Autowired
+    private PrincipalService principalService;
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Admin admin, HttpServletRequest request) {
-        Admin existing = adminService.getByEmail(admin.getEmail());
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials, HttpServletRequest request) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
 
-        if (existing != null && existing.getPassword().equals(admin.getPassword())) {
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    existing.getEmail(), null, Collections.emptyList());
+        // First try Admin
+        Admin existingAdmin = adminService.getByEmail(email);
+        if (existingAdmin != null && existingAdmin.getPassword().equals(password)) {
+            authenticateUser(email, request);
 
-            HttpSession session = request.getSession(true);
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(authToken);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-
-            // ✅ Return permission in response
             return ResponseEntity.ok(Map.of(
-                    "message", "Login successful",
-                    "permission", existing.getPermission()));
+                    "message", "Admin login successful",
+                    "permission", existingAdmin.getPermission()));
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                Map.of("message", "Invalid email or password"));
+        // Then try Principal
+        Principal principal = principalService.getByEmail(email);
+        if (principal != null && principal.getPassword().equals(password)) {
+            authenticateUser(email, request);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Principal login successful",
+                    "permission", principal.getPermission()));
+        }
+
+        // If neither found
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Invalid email or password"));
+    }
+
+    // ✅ Reusable auth logic
+    private void authenticateUser(String email, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                email, null, Collections.emptyList());
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authToken);
+        request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", context);
     }
 
     @PostMapping("/logout")

@@ -10,6 +10,8 @@ public class College {
 
     private String colgname;
 
+    private String address;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -25,6 +27,14 @@ public class College {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 }
