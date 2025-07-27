@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admins")
@@ -23,23 +24,26 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Admin admin, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody Admin admin, HttpServletRequest request) {
         Admin existing = adminService.getByEmail(admin.getEmail());
 
         if (existing != null && existing.getPassword().equals(admin.getPassword())) {
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(existing.getEmail(),
-                    null, Collections.emptyList());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    existing.getEmail(), null, Collections.emptyList());
 
-            // Create new session and attach context
             HttpSession session = request.getSession(true);
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authToken);
             session.setAttribute("SPRING_SECURITY_CONTEXT", context);
 
-            return ResponseEntity.ok("Login successful");
+            // ✅ Return permission in response
+            return ResponseEntity.ok(Map.of(
+                    "message", "Login successful",
+                    "permission", existing.getPermission()));
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                Map.of("message", "Invalid email or password"));
     }
 
     @PostMapping("/logout")
@@ -78,4 +82,10 @@ public class AdminController {
     public ResponseEntity<String> secure() {
         return ResponseEntity.ok("You are authenticated as ADMIN.");
     }
+
+    @GetMapping("/email/{email}")
+    public Admin getByEmail(@PathVariable String email) {
+        return adminService.getByEmail(email);
+    }
+
 }
