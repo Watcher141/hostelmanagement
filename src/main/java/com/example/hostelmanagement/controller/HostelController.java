@@ -24,6 +24,11 @@ public class HostelController {
         return hostelService.getHostelById(id);
     }
 
+    @GetMapping("/rollnumber/{rollnumber}")
+    public Hostel findByRollnumber(@PathVariable String rollnumber) {
+        return hostelService.findByRollnumber(rollnumber);
+    }
+
     @PostMapping
     public Hostel createHostel(@RequestBody Hostel hostel) {
         return hostelService.createHostel(hostel);

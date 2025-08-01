@@ -13,6 +13,7 @@ public class Hostel {
     private String avail;
     private String money;
     private Long colgid;
+    private String rollnumber;
 
     @ManyToOne
     @JoinColumn(name = "colgid", referencedColumnName = "id", insertable = false, updatable = false)
@@ -41,6 +42,10 @@ public class Hostel {
 
     public College getCollege() {
         return college;
+    }
+
+    public String getRollnumber() {
+        return rollnumber;
     }
 
     public void setId(Long id) {
@@ -73,5 +78,9 @@ public class Hostel {
 
     public void setColgid(Long colgid) {
         this.colgid = colgid;
+    }
+
+    public void setRollnumber(String rollnumber) {
+        this.rollnumber = rollnumber;
     }
 }

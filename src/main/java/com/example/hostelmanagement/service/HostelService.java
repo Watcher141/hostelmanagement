@@ -25,6 +25,10 @@ public class HostelService {
         return hostelRepository.save(hostel);
     }
 
+    public Hostel findByRollnumber(String rollnumber) {
+        return hostelRepository.findByRollnumber(rollnumber);
+    }
+
     public Hostel updateHostel(Long id, Hostel hostelDetails) {
         Hostel hostel = hostelRepository.findById(id).orElse(null);
         if (hostel != null) {
@@ -33,6 +37,8 @@ public class HostelService {
             hostel.setAvail(hostelDetails.getAvail());
             hostel.setMoney(hostelDetails.getMoney());
             hostel.setCollege(hostelDetails.getCollege());
+            hostel.setRollnumber(hostelDetails.getRollnumber());
+
             return hostelRepository.save(hostel);
         }
         return null;
@@ -41,4 +47,5 @@ public class HostelService {
     public void deleteHostel(Long id) {
         hostelRepository.deleteById(id);
     }
+
 }

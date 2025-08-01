@@ -1,5 +1,6 @@
 package com.example.hostelmanagement.service;
 
+import com.example.hostelmanagement.entity.Principal;
 import com.example.hostelmanagement.entity.Student;
 import com.example.hostelmanagement.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class StudentService {
             student.setEmail(studentDetails.getEmail());
             student.setPassword(studentDetails.getPassword());
             student.setAddress(studentDetails.getAddress());
+            // student.setRollnumber(studentDetails.getRollnumber());
+            // student.setRollnumber(studentDetails.getRollnumber());
+
             return studentRepository.save(student);
         }
         return null;
@@ -40,5 +44,10 @@ public class StudentService {
 
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
+    }
+
+    // ✅ ADD THIS METHOD for login
+    public Student getByEmail(String email) {
+        return studentRepository.findByEmail(email);
     }
 }

@@ -17,19 +17,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(withDefaults())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/admins/login", "/admins/logout").permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
-            .logout(logout -> logout
-                .logoutUrl("/admins/logout") 
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-            );
+                .csrf(csrf -> csrf.disable())
+                .cors(withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admins/login", "/admins/logout").permitAll()
+                        // .requestMatchers("/students/**").hasAnyAuthority("VIEW_ONLY", "EDIT", "ALL")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .logout(logout -> logout
+                        .logoutUrl("/admins/logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"));
 
         return http.build();
     }
