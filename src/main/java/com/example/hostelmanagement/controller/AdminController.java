@@ -2,7 +2,7 @@ package com.example.hostelmanagement.controller;
 
 import com.example.hostelmanagement.entity.Principal;
 import com.example.hostelmanagement.entity.Student;
-import com.example.hostelmanagement.repository.PrincipalRepository;
+
 import com.example.hostelmanagement.entity.Admin;
 import com.example.hostelmanagement.service.AdminService;
 import com.example.hostelmanagement.service.PrincipalService;
@@ -17,10 +17,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/admins")

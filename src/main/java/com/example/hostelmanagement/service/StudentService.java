@@ -1,6 +1,6 @@
 package com.example.hostelmanagement.service;
 
-import com.example.hostelmanagement.entity.Principal;
+
 import com.example.hostelmanagement.entity.Student;
 import com.example.hostelmanagement.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
