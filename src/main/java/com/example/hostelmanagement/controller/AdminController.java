@@ -48,7 +48,7 @@ public class AdminController {
             return ResponseEntity.ok(Map.of(
                     "message", "Admin login successful",
                     "permission", existingAdmin.getPermission(),
-                    "user", existingAdmin // 🔥 Send the full principal object
+                    "user", existingAdmin 
 
             ));
 
@@ -62,7 +62,7 @@ public class AdminController {
             return ResponseEntity.ok(Map.of(
                     "message", "Principal login successful",
                     "permission", principal.getPermission(),
-                    "user", principal // 🔥 Send the full principal object
+                    "user", principal 
             ));
         }
 
@@ -70,8 +70,7 @@ public class AdminController {
 
         Student student = studentService.getByEmail(email);
         if (student != null && student.getPassword().equals(password)) {
-            authenticateUser(email, "STUDENT", request); // Explicitly set permission to "STUDENT"
-
+            authenticateUser(email, "STUDENT", request); 
             return ResponseEntity.ok(Map.of(
                     "message", "Student login successful",
                     "permission", "STUDENT",
