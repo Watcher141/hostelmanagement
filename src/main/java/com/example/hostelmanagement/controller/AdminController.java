@@ -82,7 +82,7 @@ public class AdminController {
                 .body(Map.of("message", "Invalid email or password"));
     }
 
-    // ✅ Reusable auth logic
+    
     private void authenticateUser(String email, String permission, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 email, null, List.of(() -> permission));
